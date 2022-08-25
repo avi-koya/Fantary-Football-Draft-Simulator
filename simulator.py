@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 class Player:
     def __init__(self, name, position, bye, value):
@@ -13,12 +12,6 @@ class Team:
         self.name = name
         self.draftPos = draftPos
         self.team = []
-        self.qb = 0
-        self.wr = 0
-        self.rb = 0
-        self.te = 0
-        self.dst = 0
-        self.k = 0
 
     def draftPlayer(self, player):
         self.team.append(player)
@@ -43,8 +36,6 @@ while(draftPick > 10 or draftPick < 1):
 p1 = Player(rankings.iloc[1][1], rankings.iloc[1][2], rankings.iloc[1][3], rankings.iloc[1][4])
 myTeam = Team(teamName, draftPick)
 
-myTeam.draftPlayer(p1)
-myTeam.printTeam()
 
 print(rankings)
 
@@ -65,10 +56,51 @@ bot7 = Team("bot7", picks[6])
 bot8 = Team("bot8", picks[7])
 bot9 = Team("bot9", picks[8])
 
+draftOrder = [bot1, bot2, bot3, bot4, bot5, bot6, bot7, bot8, bot9]
+draftOrder.insert(draftPick - 1, myTeam)
+
 reverse = False
-count = 0
+pickNum = 0
 
+selected = []
+for val in range(0, 300):
+    selected.append(val)
+while(len(rankings) > 0):
+    team = draftOrder[pickNum]
+    
+    if reverse:
+        pickNum -= 1
+    else :
+        pickNum += 1
+    
+    if pickNum == 10:
+        reverse = True
+        pickNum -= 1
+    elif pickNum == -1:
+        reverse = False
+        pickNum += 1
 
+    if team.draftPos == myTeam.draftPos:
+        print("It's your time to draft! Select a player!")
+        print(rankings.head(10))
+        print("Enter index number: ")
+        num = int(input()) - (int(rankings.iloc[0][0]) - 1)
+        p = Player(rankings.iloc[num][1], rankings.iloc[num][2], rankings.iloc[num][3], rankings.iloc[num][4])
+        print(rankings.iloc[num][1])
+        print(num + rankings.iloc[0][0] - 1)
+        selected.remove(num + int(rankings.iloc[0][0]) - 1)
+        rankings = rankings.drop(num + int(rankings.iloc[0][0]) - 1)
+        print(selected)
+        myTeam.draftPlayer(p)
+        print("See your team (yes or no)?")
+        response = input().lower()
+        if(response == "yes"):
+            myTeam.printTeam()
+    else:
+        first = selected.pop(0)
+        p = Player(rankings.iloc[0][1], rankings.iloc[0][2], rankings.iloc[0][3], rankings.iloc[0][4])
+        rankings = rankings.drop(first)
+        team.draftPlayer(p)
 
 
 
